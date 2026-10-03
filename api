@@ -1,0 +1,26 @@
+import requests
+
+url = "https://makaproduct.amocrm.ru/api/v4/leads/pipelines"
+headers = {
+    "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImU1YTYyMWFmNjFlMGU4MjZiNzc4ZmE4MjkxMjU0NzVmMDg5ZWQ3Y2MwNGQ0NTA1MTQzNjllMmZkN2IwMDkxNzEwMTJiYThjNGVhYjlhYmNkIn0.eyJhdWQiOiI5NzI2MzcwZC01MGYyLTRmNzctOGI3Zi1mODRjOGZhYzA4YjAiLCJqdGkiOiJlNWE2MjFhZjYxZTBlODI2Yjc3OGZhODI5MTI1NDc1ZjA4OWVkN2NjMDRkNDUwNTE0MzY5ZTJmZDdiMDA5MTcxMDEyYmE4YzRlYWI5YWJjZCIsImlhdCI6MTc5MTA1MTY0MCwibmJmIjoxNzkxMDUxNjQwLCJleHAiOjE3OTYyNTYwMDAsInN1YiI6IjE0MzA2ODU4IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMzMzAyMDM0LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiN2FmOWI3NzYtNTIwMi00N2QyLTkyMGEtYTUxMTVkM2QwYmNmIiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.NYx2Kin3hmEVoUbJ7al1YFvh_feMibUyRYo0s3W_OldEKecNJWb9PN_Q0IvEXcutVD6XJBUaPs934vOfL3ifwPvAOY85oFUGHCSW7QPIcW_dChUyJphoYwMBE1eOHeOnt0DaeU-xckrnJYsyVbmQsOxFTh8Ky1OHchvn9ZYlSCD337OfKs45NSRUTnGmPTUDYKz1xadbntoXw8YCixzlNAWFAkVXS5ric2p5BM-o-l_afrgDP1b8ZlLEkbnWBd77Maleu25kEKmCfI__xPdibCQ0y8uCl01EHb1LaZqx7cmTPfo4AwTPK0V7Bs10a2BvMz28OCYHT0PajROZ3GUP1g", # O'z tokeningizni yozasiz
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+    data = response.json()
+    pipelines = data.get("_embedded", {}).get("pipelines", [])
+    
+    for pipeline in pipelines:
+        print(f"\nVoronka nomi: {pipeline['name']} (ID: {pipeline['id']})")
+        print("Etaplar (Statuses):")
+        
+        # Har bir voronkaning ichidagi etaplar
+        statuses = pipeline.get("_embedded", {}).get("statuses", [])
+        for status in statuses:
+            # Sistemadagi maxsus etaplabni (Boshlang'ich, Muvaffaqiyatli, Unutildi) chiqarib tashlashimiz ham mumkin,
+            # lekin barchasini ko'rish foydali
+            print(f"  - {status['name']} -> ID: {status['id']}")
+else:
+    print(f"Xatolik: {response.status_code}", response.text)
